@@ -1,0 +1,79 @@
+version: "3.9"
+
+services:
+  bootnode:
+    image: ethereum/client-go:alltools-v1.13.11
+    ports:
+      - "30301:30301/udp"
+      - "30305:30305/udp"
+    working_dir: /node
+    volumes:
+      - $PWD/boot.key:/node/boot.key
+    depends_on:
+      - init-bootnode
+
+  node1:
+    image: ethereum/client-go:alltools-v1.13.11
+    ports:
+      - "30306:30306"
+      - "30306:30306/udp"
+      - "8551:8551"
+      - "8545:8545"
+    working_dir: /node
+    volumes:
+      - $PWD/node1:/node/node1
+    depends_on:
+      - bootnode
+    command:
+      geth
+      --datadir=node1
+      --port=30306
+      --ipcdisable
+      --networkid=12345
+      --unlock=0x9748B8D59B75596204ea3f6A5028dDCf63F034FE
+      --password=node1/password.txt
+      --authrpc.port=8551
+      --mine
+      --miner.etherbase=0x9748B8D59B75596204ea3f6A5028dDCf63F034FE
+      --syncmode=full
+      --http
+      --allow-insecure-unlock
+      --bootnodes="enode://ee4b066d023dd5488d19b016ca9d846088f77e5d33f0165496bf77265b4c72cd1871a9aedf17b9793f1694dae623f78ef9d2759afbaa62dc08fa14098446307d@172.25.0.101:0?discport=30305"
+    networks:
+      chainnet:
+        ipv4_address: 172.25.0.102
+
+  node2:
+    image: ethereum/client-go:alltools-v1.13.11
+    ports:
+      - "30307:30307"
+      - "30307:30307/udp"
+      - "8552:8552"
+    working_dir: /node
+    volumes:
+      - $PWD/node2:/node/node2
+    depends_on:
+      - bootnode
+    command:
+      geth
+      --datadir=node2
+      --port=30307
+      --ipcdisable
+      --networkid=12345
+      --unlock=0x4Ed9D3B37a343b5315944E63b486c75254C20ad9
+      --password=node2/password.txt
+      --authrpc.port=8552
+      --mine
+      --miner.etherbase=0x4Ed9D3B37a343b5315944E63b486c75254C20ad9
+      --syncmode=full
+      --bootnodes="enode://ee4b066d023dd5488d19b016ca9d846088f77e5d33f0165496bf77265b4c72cd1871a9aedf17b9793f1694dae623f78ef9d2759afbaa62dc08fa14098446307d@172.25.0.101:0?discport=30305"
+    networks:
+      chainnet:
+        ipv4_address: 172.25.0.103
+
+networks:
+  chainnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24
