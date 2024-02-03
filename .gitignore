@@ -2,3 +2,4 @@ bootnode
 node1
 node2
 genesis.json
+docker-compose.yml

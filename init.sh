@@ -34,7 +34,11 @@ bootnode_genkey() {
 
     docker run --rm -v $(pwd)/bootnode:/node/bootnode -w /node \
         ethereum/client-go:alltools-v1.13.11 \
-        bootnode --genkey=/node/bootnode/boot.key
+        bootnode -genkey=/node/bootnode/boot.key
+
+    docker run --rm -v $(pwd)/bootnode:/node/bootnode -w /node \
+        ethereum/client-go:alltools-v1.13.11 \
+        bootnode -nodekey=/node/bootnode/boot.key -writeaddress
 }
 
 init_node() {
@@ -71,10 +75,14 @@ envsubst < genesis.json.template > genesis.json
 cat genesis.json | jq
 
 # Set up the bootnode
-bootnode_genkey
+export BOOTNODE_ADDRESS=$(bootnode_genkey)
 
 # Set up the nodes
 init_node node1 $ACCOUNT1
 init_node node2 $ACCOUNT2
+
+# Render the docker-compose.yml file
+echo -e "${CYN}Creating the docker-compose.yml file${END}"
+envsubst < docker-compose.yml.template > docker-compose.yml
 
 echo -e "${GRN}All done!${END}"
