@@ -13,7 +13,7 @@ services:
       bootnode
       -nodekey=bootnode/boot.key
       -addr=":30305"
-      -verbosity=5
+      -verbosity=4
 
   node1:
     image: ethereum/client-go:alltools-v1.13.11
