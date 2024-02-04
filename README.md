@@ -39,3 +39,17 @@ An exmaple output:
 2. Navigate to the page to add network via **Settings**>**Networks**>**Add a network**>**Add a network manually**.
 
 ![add network](media/metamask-add-network.png)
+
+3. Add the account created to MetaMask
+
+Go to **Select Acount**
+
+![add account](media/metamask-add-account.png)
+
+Go to import account page via **Add account or hardware wallet**>**import account**
+
+![import account](media/metamask-import-account.png)
+
+4. After you imoprt the account in genesis.json then you can transfer ETH to any account.
+
+![transfer](media/meta-mask-transfer.png)
