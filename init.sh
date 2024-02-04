@@ -9,6 +9,12 @@ GRN="\033[32m" # Green
 YLW="\033[33m" # Yellow
 BLU="\033[34m" # Blue
 
+read_and_export() {
+    echo -n -e "$1 ($2): "
+    read -r var
+    export $3=${var:-$2}
+}
+
 create_account() {
     node=$1
 
@@ -16,10 +22,9 @@ create_account() {
 
     mkdir -p $node
 
-    echo -n -e "${CYN}Please enter a password for ACCOUNT1${END} (password): "
-    read -r password
+    read_and_export "${CYN}Please enter a password for ACCOUNT1${END}" password PASS
 
-    echo $password > $node/password.txt
+    echo $PASS > $node/password.txt
 
     output=$(docker run --rm -v $(pwd)/$node:/node/$node -w /node \
         ethereum/client-go:alltools-v1.13.11 \
@@ -50,11 +55,6 @@ init_node() {
         geth --datadir $node init /node/genesis.json
 }
 
-read_and_export() {
-    echo -n -e "$1 ($2): "
-    read -r var
-    export $3=${var:-$2}
-}
 
 # Set up the genesis.json
 echo -e "${CYN}We are setting up the genesis.json file${END}"
